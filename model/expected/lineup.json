@@ -1,0 +1,56 @@
+{
+   "location": {
+       "name": "Bournemouth",
+       "crs": "BMH",
+       "tiploc": "BOMO"
+   },
+   "filter": null,
+   "services": [
+       {
+           "locationDetail": {
+               "realtimeActivated": true,
+               "tiploc": "BOMO",
+               "crs": "BMH",
+               "description": "Bournemouth",
+               "wttBookedArrival": "011630",
+               "wttBookedDeparture": "011830",
+               "gbttBookedArrival": "0117",
+               "gbttBookedDeparture": "0118",
+               "origin": [
+                   {
+                       "tiploc": "WATRLMN",
+                       "description": "London Waterloo",
+                       "workingTime": "230500",
+                       "publicTime": "2305"
+                   }
+               ],
+               "destination": [
+                   {
+                       "tiploc": "POOLE",
+                       "description": "Poole",
+                       "workingTime": "013000",
+                       "publicTime": "0130"
+                   }
+               ],
+               "isCall": true,
+               "isPublicCall": true,
+               "realtimeArrival": "0114",
+               "realtimeArrivalActual": false,
+               "realtimeDeparture": "0118",
+               "realtimeDepartureActual": false,
+               "platform": "3",
+               "platformConfirmed": false,
+               "platformChanged": false,
+               "displayAs": "CALL"
+           },
+           "serviceUid": "W90091",
+           "runDate": "2013-06-11",
+           "trainIdentity": "1B77",
+           "runningIdentity": "1B77",
+           "atocCode": "SW",
+           "atocName": "South West Trains",
+           "serviceType": "train",
+           "isPassenger": true
+       }
+   ]
+}

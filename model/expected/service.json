@@ -1,0 +1,556 @@
+{
+  "serviceUid": "Q13773",
+  "runDate": "2020-02-12",
+  "serviceType": "train",
+  "isPassenger": true,
+  "trainIdentity": "1Z73",
+  "powerType": "EMU",
+  "trainClass": "B",
+  "atocCode": "SW",
+  "atocName": "South Western Railway",
+  "performanceMonitored": true,
+  "origin": [
+    {
+      "tiploc": "ELGH",
+      "description": "Eastleigh",
+      "workingTime": "233700",
+      "publicTime": "2337"
+    }
+  ],
+  "destination": [
+    {
+      "tiploc": "POOLE",
+      "description": "Poole",
+      "workingTime": "004700",
+      "publicTime": "0047"
+    }
+  ],
+  "locations": [
+    {
+      "realtimeActivated": true,
+      "tiploc": "ELGH",
+      "crs": "ESL",
+      "description": "Eastleigh",
+      "gbttBookedDeparture": "2337",
+      "origin": [
+        {
+          "tiploc": "ELGH",
+          "description": "Eastleigh",
+          "workingTime": "233700",
+          "publicTime": "2337"
+        }
+      ],
+      "destination": [
+        {
+          "tiploc": "POOLE",
+          "description": "Poole",
+          "workingTime": "004700",
+          "publicTime": "0047"
+        }
+      ],
+      "isCall": true,
+      "isPublicCall": true,
+      "realtimeDeparture": "2337",
+      "realtimeDepartureActual": false,
+      "platform": "2N",
+      "platformConfirmed": false,
+      "platformChanged": false,
+      "displayAs": "ORIGIN"
+    },
+    {
+      "realtimeActivated": true,
+      "tiploc": "SOTPKWY",
+      "crs": "SOA",
+      "description": "Southampton Airport Parkway",
+      "gbttBookedArrival": "2340",
+      "gbttBookedDeparture": "2341",
+      "origin": [
+        {
+          "tiploc": "ELGH",
+          "description": "Eastleigh",
+          "workingTime": "233700",
+          "publicTime": "2337"
+        }
+      ],
+      "destination": [
+        {
+          "tiploc": "POOLE",
+          "description": "Poole",
+          "workingTime": "004700",
+          "publicTime": "0047"
+        }
+      ],
+      "isCall": true,
+      "isPublicCall": true,
+      "realtimeArrival": "2340",
+      "realtimeArrivalActual": false,
+      "realtimeDeparture": "2341",
+      "realtimeDepartureActual": false,
+      "platform": "2",
+      "platformConfirmed": false,
+      "platformChanged": false,
+      "displayAs": "CALL"
+    },
+    {
+      "realtimeActivated": true,
+      "tiploc": "SOTON",
+      "crs": "SOU",
+      "description": "Southampton Central",
+      "gbttBookedArrival": "2348",
+      "gbttBookedDeparture": "2350",
+      "origin": [
+        {
+          "tiploc": "ELGH",
+          "description": "Eastleigh",
+          "workingTime": "233700",
+          "publicTime": "2337"
+        }
+      ],
+      "destination": [
+        {
+          "tiploc": "POOLE",
+          "description": "Poole",
+          "workingTime": "004700",
+          "publicTime": "0047"
+        }
+      ],
+      "isCall": true,
+      "isPublicCall": true,
+      "realtimeArrival": "2347",
+      "realtimeArrivalActual": false,
+      "realtimeDeparture": "2350",
+      "realtimeDepartureActual": false,
+      "platform": "4",
+      "platformConfirmed": false,
+      "platformChanged": false,
+      "line": "FL",
+      "lineConfirmed": false,
+      "displayAs": "CALL"
+    },
+    {
+      "realtimeActivated": true,
+      "tiploc": "TOTTON",
+      "crs": "TTN",
+      "description": "Totton",
+      "gbttBookedArrival": "2355",
+      "gbttBookedDeparture": "2355",
+      "origin": [
+        {
+          "tiploc": "ELGH",
+          "description": "Eastleigh",
+          "workingTime": "233700",
+          "publicTime": "2337"
+        }
+      ],
+      "destination": [
+        {
+          "tiploc": "POOLE",
+          "description": "Poole",
+          "workingTime": "004700",
+          "publicTime": "0047"
+        }
+      ],
+      "isCall": true,
+      "isPublicCall": true,
+      "realtimeArrival": "2354",
+      "realtimeArrivalActual": false,
+      "realtimeDeparture": "2355",
+      "realtimeDepartureActual": false,
+      "platform": "2",
+      "platformConfirmed": false,
+      "platformChanged": false,
+      "displayAs": "CALL"
+    },
+    {
+      "realtimeActivated": true,
+      "tiploc": "LYNDHRD",
+      "crs": "ANF",
+      "description": "Ashurst New Forest",
+      "gbttBookedArrival": "2359",
+      "gbttBookedDeparture": "2359",
+      "origin": [
+        {
+          "tiploc": "ELGH",
+          "description": "Eastleigh",
+          "workingTime": "233700",
+          "publicTime": "2337"
+        }
+      ],
+      "destination": [
+        {
+          "tiploc": "POOLE",
+          "description": "Poole",
+          "workingTime": "004700",
+          "publicTime": "0047"
+        }
+      ],
+      "isCall": true,
+      "isPublicCall": true,
+      "realtimeArrival": "2359",
+      "realtimeArrivalActual": false,
+      "realtimeDeparture": "2359",
+      "realtimeDepartureActual": false,
+      "displayAs": "CALL"
+    },
+    {
+      "realtimeActivated": true,
+      "tiploc": "BKNHRST",
+      "crs": "BCU",
+      "description": "Brockenhurst",
+      "gbttBookedArrival": "0008",
+      "gbttBookedArrivalNextDay": true,
+      "gbttBookedDeparture": "0009",
+      "gbttBookedDepartureNextDay": true,
+      "origin": [
+        {
+          "tiploc": "ELGH",
+          "description": "Eastleigh",
+          "workingTime": "233700",
+          "publicTime": "2337"
+        }
+      ],
+      "destination": [
+        {
+          "tiploc": "POOLE",
+          "description": "Poole",
+          "workingTime": "004700",
+          "publicTime": "0047"
+        }
+      ],
+      "isCall": true,
+      "isPublicCall": true,
+      "realtimeArrival": "0007",
+      "realtimeArrivalActual": false,
+      "realtimeArrivalNextDay": true,
+      "realtimeDeparture": "0009",
+      "realtimeDepartureActual": false,
+      "realtimeDepartureNextDay": true,
+      "platform": "3",
+      "platformConfirmed": false,
+      "platformChanged": false,
+      "displayAs": "CALL"
+    },
+    {
+      "realtimeActivated": true,
+      "tiploc": "SWAY",
+      "crs": "SWY",
+      "description": "Sway",
+      "gbttBookedArrival": "0013",
+      "gbttBookedArrivalNextDay": true,
+      "gbttBookedDeparture": "0013",
+      "gbttBookedDepartureNextDay": true,
+      "origin": [
+        {
+          "tiploc": "ELGH",
+          "description": "Eastleigh",
+          "workingTime": "233700",
+          "publicTime": "2337"
+        }
+      ],
+      "destination": [
+        {
+          "tiploc": "POOLE",
+          "description": "Poole",
+          "workingTime": "004700",
+          "publicTime": "0047"
+        }
+      ],
+      "isCall": true,
+      "isPublicCall": true,
+      "realtimeArrival": "0013",
+      "realtimeArrivalActual": false,
+      "realtimeArrivalNextDay": true,
+      "realtimeDeparture": "0013",
+      "realtimeDepartureActual": false,
+      "realtimeDepartureNextDay": true,
+      "displayAs": "CALL"
+    },
+    {
+      "realtimeActivated": true,
+      "tiploc": "NMILTON",
+      "crs": "NWM",
+      "description": "New Milton",
+      "gbttBookedArrival": "0018",
+      "gbttBookedArrivalNextDay": true,
+      "gbttBookedDeparture": "0018",
+      "gbttBookedDepartureNextDay": true,
+      "origin": [
+        {
+          "tiploc": "ELGH",
+          "description": "Eastleigh",
+          "workingTime": "233700",
+          "publicTime": "2337"
+        }
+      ],
+      "destination": [
+        {
+          "tiploc": "POOLE",
+          "description": "Poole",
+          "workingTime": "004700",
+          "publicTime": "0047"
+        }
+      ],
+      "isCall": true,
+      "isPublicCall": true,
+      "realtimeArrival": "0017",
+      "realtimeArrivalActual": false,
+      "realtimeArrivalNextDay": true,
+      "realtimeDeparture": "0018",
+      "realtimeDepartureActual": false,
+      "realtimeDepartureNextDay": true,
+      "displayAs": "CALL"
+    },
+    {
+      "realtimeActivated": true,
+      "tiploc": "HINTONA",
+      "crs": "HNA",
+      "description": "Hinton Admiral",
+      "gbttBookedArrival": "0022",
+      "gbttBookedArrivalNextDay": true,
+      "gbttBookedDeparture": "0022",
+      "gbttBookedDepartureNextDay": true,
+      "origin": [
+        {
+          "tiploc": "ELGH",
+          "description": "Eastleigh",
+          "workingTime": "233700",
+          "publicTime": "2337"
+        }
+      ],
+      "destination": [
+        {
+          "tiploc": "POOLE",
+          "description": "Poole",
+          "workingTime": "004700",
+          "publicTime": "0047"
+        }
+      ],
+      "isCall": true,
+      "isPublicCall": true,
+      "realtimeArrival": "0021",
+      "realtimeArrivalActual": false,
+      "realtimeArrivalNextDay": true,
+      "realtimeDeparture": "0022",
+      "realtimeDepartureActual": false,
+      "realtimeDepartureNextDay": true,
+      "displayAs": "CALL"
+    },
+    {
+      "realtimeActivated": true,
+      "tiploc": "CHRISTC",
+      "crs": "CHR",
+      "description": "Christchurch",
+      "gbttBookedArrival": "0026",
+      "gbttBookedArrivalNextDay": true,
+      "gbttBookedDeparture": "0027",
+      "gbttBookedDepartureNextDay": true,
+      "origin": [
+        {
+          "tiploc": "ELGH",
+          "description": "Eastleigh",
+          "workingTime": "233700",
+          "publicTime": "2337"
+        }
+      ],
+      "destination": [
+        {
+          "tiploc": "POOLE",
+          "description": "Poole",
+          "workingTime": "004700",
+          "publicTime": "0047"
+        }
+      ],
+      "isCall": true,
+      "isPublicCall": true,
+      "realtimeArrival": "0026",
+      "realtimeArrivalActual": false,
+      "realtimeArrivalNextDay": true,
+      "realtimeDeparture": "0027",
+      "realtimeDepartureActual": false,
+      "realtimeDepartureNextDay": true,
+      "displayAs": "CALL"
+    },
+    {
+      "realtimeActivated": true,
+      "tiploc": "POKSDWN",
+      "crs": "POK",
+      "description": "Pokesdown",
+      "gbttBookedArrival": "0030",
+      "gbttBookedArrivalNextDay": true,
+      "gbttBookedDeparture": "0030",
+      "gbttBookedDepartureNextDay": true,
+      "origin": [
+        {
+          "tiploc": "ELGH",
+          "description": "Eastleigh",
+          "workingTime": "233700",
+          "publicTime": "2337"
+        }
+      ],
+      "destination": [
+        {
+          "tiploc": "POOLE",
+          "description": "Poole",
+          "workingTime": "004700",
+          "publicTime": "0047"
+        }
+      ],
+      "isCall": true,
+      "isPublicCall": true,
+      "realtimeArrival": "0030",
+      "realtimeArrivalActual": false,
+      "realtimeArrivalNextDay": true,
+      "realtimeDeparture": "0030",
+      "realtimeDepartureActual": false,
+      "realtimeDepartureNextDay": true,
+      "displayAs": "CALL"
+    },
+    {
+      "realtimeActivated": true,
+      "tiploc": "BOMO",
+      "crs": "BMH",
+      "description": "Bournemouth",
+      "gbttBookedArrival": "0034",
+      "gbttBookedArrivalNextDay": true,
+      "gbttBookedDeparture": "0036",
+      "gbttBookedDepartureNextDay": true,
+      "origin": [
+        {
+          "tiploc": "ELGH",
+          "description": "Eastleigh",
+          "workingTime": "233700",
+          "publicTime": "2337"
+        }
+      ],
+      "destination": [
+        {
+          "tiploc": "POOLE",
+          "description": "Poole",
+          "workingTime": "004700",
+          "publicTime": "0047"
+        }
+      ],
+      "isCall": true,
+      "isPublicCall": true,
+      "realtimeArrival": "0034",
+      "realtimeArrivalActual": false,
+      "realtimeArrivalNextDay": true,
+      "realtimeDeparture": "0036",
+      "realtimeDepartureActual": false,
+      "realtimeDepartureNextDay": true,
+      "platform": "3",
+      "platformConfirmed": false,
+      "platformChanged": false,
+      "displayAs": "CALL"
+    },
+    {
+      "realtimeActivated": true,
+      "tiploc": "BRANKSM",
+      "crs": "BSM",
+      "description": "Branksome",
+      "gbttBookedArrival": "0041",
+      "gbttBookedArrivalNextDay": true,
+      "gbttBookedDeparture": "0041",
+      "gbttBookedDepartureNextDay": true,
+      "origin": [
+        {
+          "tiploc": "ELGH",
+          "description": "Eastleigh",
+          "workingTime": "233700",
+          "publicTime": "2337"
+        }
+      ],
+      "destination": [
+        {
+          "tiploc": "POOLE",
+          "description": "Poole",
+          "workingTime": "004700",
+          "publicTime": "0047"
+        }
+      ],
+      "isCall": true,
+      "isPublicCall": true,
+      "realtimeArrival": "0040",
+      "realtimeArrivalActual": false,
+      "realtimeArrivalNextDay": true,
+      "realtimeDeparture": "0041",
+      "realtimeDepartureActual": false,
+      "realtimeDepartureNextDay": true,
+      "platform": "2",
+      "platformConfirmed": false,
+      "platformChanged": false,
+      "displayAs": "CALL"
+    },
+    {
+      "realtimeActivated": true,
+      "tiploc": "PSTONE",
+      "crs": "PKS",
+      "description": "Parkstone (Dorset)",
+      "gbttBookedArrival": "0044",
+      "gbttBookedArrivalNextDay": true,
+      "gbttBookedDeparture": "0044",
+      "gbttBookedDepartureNextDay": true,
+      "origin": [
+        {
+          "tiploc": "ELGH",
+          "description": "Eastleigh",
+          "workingTime": "233700",
+          "publicTime": "2337"
+        }
+      ],
+      "destination": [
+        {
+          "tiploc": "POOLE",
+          "description": "Poole",
+          "workingTime": "004700",
+          "publicTime": "0047"
+        }
+      ],
+      "isCall": true,
+      "isPublicCall": true,
+      "realtimeArrival": "0043",
+      "realtimeArrivalActual": false,
+      "realtimeArrivalNextDay": true,
+      "realtimeDeparture": "0044",
+      "realtimeDepartureActual": false,
+      "realtimeDepartureNextDay": true,
+      "displayAs": "CALL"
+    },
+    {
+      "realtimeActivated": true,
+      "tiploc": "POOLE",
+      "crs": "POO",
+      "description": "Poole",
+      "gbttBookedArrival": "0047",
+      "gbttBookedArrivalNextDay": true,
+      "origin": [
+        {
+          "tiploc": "ELGH",
+          "description": "Eastleigh",
+          "workingTime": "233700",
+          "publicTime": "2337"
+        }
+      ],
+      "destination": [
+        {
+          "tiploc": "POOLE",
+          "description": "Poole",
+          "workingTime": "004700",
+          "publicTime": "0047"
+        }
+      ],
+      "isCall": true,
+      "isPublicCall": true,
+      "realtimeArrival": "0047",
+      "realtimeArrivalActual": false,
+      "realtimeArrivalNextDay": true,
+      "platform": "1",
+      "platformConfirmed": false,
+      "platformChanged": false,
+      "displayAs": "DESTINATION"
+    }
+  ],
+  "realtimeActivated": true,
+  "runningIdentity": "1Z73",
+  "plannedCancel": true
+}
