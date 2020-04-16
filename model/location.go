@@ -2,9 +2,9 @@ package model
 
 // Lineup defines the response from a search for services for a given location
 type Lineup struct {
-	Location LocationDetailHeader `json:"location,omitempty"`
-	Filter   []LocationDetail     `json:"filter,omitempty"`
-	Services []LocationContainer  `json:"services,omitempty"`
+	Location LocationDetailHeader      `json:"location,omitempty"`
+	Filter   map[string]LocationDetail `json:"filter,omitempty"`
+	Services []LocationContainer       `json:"services,omitempty"`
 }
 
 // LocationDetailHeader describes the shorthand location used in the query

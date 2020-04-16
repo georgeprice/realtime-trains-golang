@@ -58,7 +58,18 @@ func (c user) get(u *url.URL) (*http.Response, error) {
 
 	// add authentication, send the request
 	req.SetBasicAuth(c.username, c.password)
-	return c.client.Do(req)
+	resp, err := c.client.Do(req)
+
+	if err != nil {
+		return resp, err
+	}
+
+	switch resp.StatusCode {
+	case http.StatusUnauthorized:
+		return nil, ErrAuthenticationFailed{}
+	default:
+		return resp, err
+	}
 }
 
 // GetDepartures returns all of the departures from a starting station
@@ -76,7 +87,7 @@ func (c user) GetDepartures(origin string) (lineup model.Lineup, err error) {
 		err = json.NewDecoder(resp.Body).Decode(&lineup)
 	}
 
-	return lineup, nil
+	return lineup, err
 }
 
 // creates the url to access a lineup resource from an origin
@@ -100,7 +111,7 @@ func (c user) GetDeparturesDestination(origin, destination string) (lineup model
 	if err == nil {
 		err = json.NewDecoder(resp.Body).Decode(&lineup)
 	}
-	return lineup, nil
+	return lineup, err
 }
 
 // creates the url to access a lineup resource from an origin to a destination
