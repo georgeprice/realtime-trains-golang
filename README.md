@@ -1,10 +1,10 @@
 # Realtime Trains Golang
 Golang implementation of Realtime Train's API
 
-## Model
+## Model
 Each object returned from the API is available as a struct in the __model__ package.
 
-### Sample
+### Sample
 ```go
 var (
     service model.Service
@@ -36,13 +36,13 @@ err = decoder.Decode(&service)
 // ...
 ```
 
-## API
+## API
 
 The __API__ package provides an easier way to retrieve data from the Realtime Trains API from your own project.
 
 [Realtime Trains API Docs](https://www.realtimetrains.co.uk/about/developer/pull/docs/)
 
-### Interface
+### Interface
 
 ```go
 // API handles interacting with a RTT REST service
@@ -64,7 +64,7 @@ type API interface {
 }
 ```
 
-### Basic usage
+### Basic usage
 Create a struct to hold login credentials, use methods to get data.
 ```go
 // create a struct to hold your credentials
