@@ -1,5 +1,5 @@
 # Realtime Trains Golang
-Golang implementation of Realtime Train's API
+Golang wrapper of Realtime Train's API
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/georgeprice/realtime-trains-golang)](https://goreportcard.com/report/github.com/georgeprice/realtime-trains-golang)
 
