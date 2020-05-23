@@ -20,7 +20,7 @@ var (
 			Name: "Bournemouth", CRS: "BMH", TIPLOC: "BOMO",
 		},
 		Services: []LocationContainer{
-			LocationContainer{
+			{
 				LocationDetail: LocationDetail{
 					RealTimeActivated:   true,
 					TIPLOC:              "BOMO",
@@ -31,7 +31,7 @@ var (
 					GBTTBookedArrival:   "0117",
 					GBTTBookedDeparture: "0118",
 					Origin: []Pair{
-						Pair{
+						{
 							TIPLOC:      "WATRLMN",
 							Description: "London Waterloo",
 							WorkingTime: "230500",
@@ -39,7 +39,7 @@ var (
 						},
 					},
 					Destination: []Pair{
-						Pair{
+						{
 							TIPLOC:      "POOLE",
 							Description: "Poole",
 							WorkingTime: "013000",
@@ -80,7 +80,7 @@ var (
 		ATOCName:             "South Western Railway",
 		PerformanceMonitored: true,
 		Origin: []Pair{
-			Pair{
+			{
 				TIPLOC:      "ELGH",
 				Description: "Eastleigh",
 				WorkingTime: "233700",
@@ -88,7 +88,7 @@ var (
 			},
 		},
 		Destination: []Pair{
-			Pair{
+			{
 				TIPLOC:      "POOLE",
 				Description: "Poole",
 				WorkingTime: "004700",
@@ -98,14 +98,14 @@ var (
 		Locations: []LocationDetail{
 
 			// first from the JSON
-			LocationDetail{
+			{
 				RealTimeActivated:   true,
 				TIPLOC:              "ELGH",
 				CRS:                 "ESL",
 				Description:         "Eastleigh",
 				GBTTBookedDeparture: "2337",
 				Origin: []Pair{
-					Pair{
+					{
 						TIPLOC:      "ELGH",
 						Description: "Eastleigh",
 						WorkingTime: "233700",
@@ -113,7 +113,7 @@ var (
 					},
 				},
 				Destination: []Pair{
-					Pair{
+					{
 						TIPLOC:      "POOLE",
 						Description: "Poole",
 						WorkingTime: "004700",
@@ -130,12 +130,12 @@ var (
 				DisplayAs:             "ORIGIN",
 			},
 
-			LocationDetail{},
-			LocationDetail{},
-			LocationDetail{},
+			{},
+			{},
+			{},
 
 			// fifth from the HSON
-			LocationDetail{
+			{
 				RealTimeActivated:   true,
 				TIPLOC:              "LYNDHRD",
 				CRS:                 "ANF",
@@ -143,7 +143,7 @@ var (
 				GBTTBookedArrival:   "2359",
 				GBTTBookedDeparture: "2359",
 				Origin: []Pair{
-					Pair{
+					{
 						TIPLOC:      "ELGH",
 						Description: "Eastleigh",
 						WorkingTime: "233700",
@@ -151,7 +151,7 @@ var (
 					},
 				},
 				Destination: []Pair{
-					Pair{
+					{
 						TIPLOC:      "POOLE",
 						Description: "Poole",
 						WorkingTime: "004700",
@@ -167,13 +167,13 @@ var (
 				DisplayAs:               "CALL",
 			},
 
-			LocationDetail{},
-			LocationDetail{},
-			LocationDetail{},
-			LocationDetail{},
+			{},
+			{},
+			{},
+			{},
 
 			// tenth from the JSON
-			LocationDetail{
+			{
 				RealTimeActivated:          true,
 				TIPLOC:                     "CHRISTC",
 				CRS:                        "CHR",
@@ -183,7 +183,7 @@ var (
 				GBTTBookedDeparture:        "0027",
 				GBTTBookedDepartureNextDay: true,
 				Origin: []Pair{
-					Pair{
+					{
 						TIPLOC:      "ELGH",
 						Description: "Eastleigh",
 						WorkingTime: "233700",
@@ -191,7 +191,7 @@ var (
 					},
 				},
 				Destination: []Pair{
-					Pair{
+					{
 						TIPLOC:      "POOLE",
 						Description: "Poole",
 						WorkingTime: "004700",

@@ -410,15 +410,15 @@ func TestURLs(t *testing.T) {
 
 	t.Run("getDepartures", func(t *testing.T) {
 		ts := []test{
-			test{
+			{
 				origin: "MAN",
 				urlStr: searchBase + "MAN",
 			},
-			test{
+			{
 				origin: "BRM",
 				urlStr: searchBase + "BRM",
 			},
-			test{
+			{
 				origin: "",
 				err:    ErrEmptyLocation{},
 			},
@@ -436,32 +436,32 @@ func TestURLs(t *testing.T) {
 
 	t.Run("getDeparturesDestination", func(t *testing.T) {
 		ts := []test{
-			test{
+			{
 				origin:      "MAN",
 				destination: "BRM",
 				urlStr:      searchBase + "MAN/to/BRM",
 			},
-			test{
+			{
 				origin:      "BOMO",
 				destination: "BRM",
 				urlStr:      searchBase + "BOMO/to/BRM",
 			},
-			test{
+			{
 				origin:      "MAN",
 				destination: "MAN",
 				err:         ErrOriginEqualsDestination{location: "MAN"},
 			},
-			test{
+			{
 				origin:      "",
 				destination: "MAN",
 				err:         ErrEmptyLocation{},
 			},
-			test{
+			{
 				origin:      "MAN",
 				destination: "",
 				err:         ErrEmptyLocation{},
 			},
-			test{
+			{
 				origin:      "",
 				destination: "",
 				err:         ErrEmptyLocation{},
@@ -480,12 +480,12 @@ func TestURLs(t *testing.T) {
 
 	t.Run("getServicesDate", func(t *testing.T) {
 		ts := []test{
-			test{
+			{
 				origin: "MAN",
 				date:   time.Date(2020, 2, 3, 4, 5, 6, 0, &time.Location{}),
 				urlStr: searchBase + "MAN/2020/02/03",
 			},
-			test{
+			{
 				origin: "",
 				date:   time.Date(2020, 2, 3, 4, 5, 6, 0, &time.Location{}),
 				err:    ErrEmptyLocation{},
@@ -504,12 +504,12 @@ func TestURLs(t *testing.T) {
 
 	t.Run("getServicesTime", func(t *testing.T) {
 		ts := []test{
-			test{
+			{
 				origin: "MAN",
 				date:   time.Date(2020, 2, 3, 4, 5, 6, 0, &time.Location{}),
 				urlStr: searchBase + "MAN/2020/02/03/0405",
 			},
-			test{
+			{
 				origin: "",
 				date:   time.Date(2020, 2, 3, 4, 5, 6, 0, &time.Location{}),
 				err:    ErrEmptyLocation{},
@@ -527,12 +527,12 @@ func TestURLs(t *testing.T) {
 
 	t.Run("getServiceInfo", func(t *testing.T) {
 		ts := []test{
-			test{
+			{
 				origin: "serviceName",
 				date:   time.Date(2020, 2, 3, 4, 5, 6, 0, &time.Location{}),
 				urlStr: serviceBase + "serviceName/2020/02/03/0405",
 			},
-			test{
+			{
 				origin: "",
 				date:   time.Date(2020, 2, 3, 4, 5, 6, 0, &time.Location{}),
 				err:    ErrEmptyLocation{},
