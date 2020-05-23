@@ -282,67 +282,44 @@ func TestAPI(t *testing.T) {
 				t.Fatal("Got nil error, expected error")
 			}
 
-			switch errType := err.(type) {
-			case nil:
-				t.Fatal("Got nil error, expected ErrAuthenticationFailed")
-			case ErrAuthenticationFailed:
-			default:
-				t.Fatalf("Got wrong error type, got %+v", errType)
+			if err != ErrAuthenticationFailed {
+				t.Fatalf("Got wrong error, got %+v, expected %+v", err, ErrAuthenticationFailed)
 			}
+
 		})
 
 		t.Run("Departures", func(t *testing.T) {
 			_, err := client.Departures("")
-			switch errType := err.(type) {
-			case nil:
-				t.Fatal("Got nil error, expected ErrEmptyLocation")
-			case ErrEmptyLocation:
-			default:
-				t.Fatalf("Got wrong error type, got %+v", errType)
+			if err != ErrEmptyLocation {
+				t.Fatalf("Got wrong error, got %+v, expected %+v", err, ErrEmptyLocation)
 			}
 		})
 
 		t.Run("DeparturesToDestination", func(t *testing.T) {
 			_, err := client.DeparturesToDestination("MAN", "")
-			switch errType := err.(type) {
-			case nil:
-				t.Fatal("Got nil error, expected ErrEmptyLocation")
-			case ErrEmptyLocation:
-			default:
-				t.Fatalf("Got wrong error type, got %+v", errType)
+			if err != ErrEmptyLocation {
+				t.Fatalf("Got wrong error, got %+v, expected %+v", err, ErrEmptyLocation)
 			}
 		})
 
 		t.Run("ServicesForDate", func(t *testing.T) {
 			_, err := client.ServicesForDate("", time.Now())
-			switch errType := err.(type) {
-			case nil:
-				t.Fatal("Got nil error, expected ErrEmptyLocation")
-			case ErrEmptyLocation:
-			default:
-				t.Fatalf("Got wrong error type, got %+v", errType)
+			if err != ErrEmptyLocation {
+				t.Fatalf("Got wrong error, got %+v, expected %+v", err, ErrEmptyLocation)
 			}
 		})
 
 		t.Run("ServicesForTime", func(t *testing.T) {
 			_, err := client.ServicesForTime("", time.Now())
-			switch errType := err.(type) {
-			case nil:
-				t.Fatal("Got nil error, expected ErrEmptyLocation")
-			case ErrEmptyLocation:
-			default:
-				t.Fatalf("Got wrong error type, got %+v", errType)
+			if err != ErrEmptyLocation {
+				t.Fatalf("Got wrong error, got %+v, expected %+v", err, ErrEmptyLocation)
 			}
 		})
 
 		t.Run("ServiceInfo", func(t *testing.T) {
 			_, err := client.ServiceInfo("", time.Now())
-			switch errType := err.(type) {
-			case nil:
-				t.Fatal("Got nil error, expected ErrEmptyLocation")
-			case ErrEmptyLocation:
-			default:
-				t.Fatalf("Got wrong error type, got %+v", errType)
+			if err != ErrEmptyLocation {
+				t.Fatalf("Got wrong error, got %+v, expected %+v", err, ErrEmptyLocation)
 			}
 		})
 
@@ -420,7 +397,7 @@ func TestURLs(t *testing.T) {
 			},
 			{
 				origin: "",
-				err:    ErrEmptyLocation{},
+				err:    ErrEmptyLocation,
 			},
 		}
 
@@ -449,22 +426,22 @@ func TestURLs(t *testing.T) {
 			{
 				origin:      "MAN",
 				destination: "MAN",
-				err:         ErrOriginEqualsDestination{location: "MAN"},
+				err:         ErrOriginEqualsDestination,
 			},
 			{
 				origin:      "",
 				destination: "MAN",
-				err:         ErrEmptyLocation{},
+				err:         ErrEmptyLocation,
 			},
 			{
 				origin:      "MAN",
 				destination: "",
-				err:         ErrEmptyLocation{},
+				err:         ErrEmptyLocation,
 			},
 			{
 				origin:      "",
 				destination: "",
-				err:         ErrEmptyLocation{},
+				err:         ErrEmptyLocation,
 			},
 		}
 
@@ -488,7 +465,7 @@ func TestURLs(t *testing.T) {
 			{
 				origin: "",
 				date:   time.Date(2020, 2, 3, 4, 5, 6, 0, &time.Location{}),
-				err:    ErrEmptyLocation{},
+				err:    ErrEmptyLocation,
 			},
 		}
 
@@ -512,7 +489,7 @@ func TestURLs(t *testing.T) {
 			{
 				origin: "",
 				date:   time.Date(2020, 2, 3, 4, 5, 6, 0, &time.Location{}),
-				err:    ErrEmptyLocation{},
+				err:    ErrEmptyLocation,
 			},
 		}
 		for _, tc := range ts {
@@ -535,7 +512,7 @@ func TestURLs(t *testing.T) {
 			{
 				origin: "",
 				date:   time.Date(2020, 2, 3, 4, 5, 6, 0, &time.Location{}),
-				err:    ErrEmptyLocation{},
+				err:    ErrEmptyLocation,
 			},
 		}
 		for _, tc := range ts {

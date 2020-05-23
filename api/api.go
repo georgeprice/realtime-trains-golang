@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -12,30 +13,16 @@ import (
 	"github.com/georgeprice/realtime-trains-golang/model"
 )
 
-// ErrEmptyLocation is returned when an empty location string is given for an endpoint
-type ErrEmptyLocation struct {
-}
+var (
+	// ErrEmptyLocation is returned when an empty location string is given for an endpoint
+	ErrEmptyLocation = errors.New("API Authentication error")
 
-func (e ErrEmptyLocation) Error() string {
-	return "Empty location given"
-}
+	// ErrOriginEqualsDestination is returned when a matching origin and destination are provided for an endpoint
+	ErrOriginEqualsDestination = errors.New("Origin location is equal destination")
 
-// ErrOriginEqualsDestination is returned when a matching origin and destination are provided for an endpoint
-type ErrOriginEqualsDestination struct {
-	location string
-}
-
-func (e ErrOriginEqualsDestination) Error() string {
-	return fmt.Sprintf("Origin location is equal destination (%s)", e.location)
-}
-
-// ErrAuthenticationFailed is returned when API credentials aren't accepted
-type ErrAuthenticationFailed struct {
-}
-
-func (e ErrAuthenticationFailed) Error() string {
-	return "API Authentication failed"
-}
+	// ErrAuthenticationFailed is returned when API credentials aren't accepted
+	ErrAuthenticationFailed = errors.New("Origin location is equal destination")
+)
 
 // User contains data for a RTT API account, wrapping requests
 type User struct {
@@ -88,7 +75,7 @@ func (c User) get(u *url.URL) (*http.Response, error) {
 	// check the response status code, return custom error
 	switch resp.StatusCode {
 	case http.StatusUnauthorized:
-		return nil, ErrAuthenticationFailed{}
+		return nil, ErrAuthenticationFailed
 	default:
 		return resp, err
 	}
@@ -114,7 +101,7 @@ func (c User) Departures(origin string) (lineup model.Lineup, err error) {
 // creates the url to access a lineup resource from an origin
 func getDepartures(endpoint *url.URL, origin string) (*url.URL, error) {
 	if origin == "" {
-		return nil, ErrEmptyLocation{}
+		return nil, ErrEmptyLocation
 	}
 	return endpoint.Parse(origin)
 }
@@ -142,11 +129,11 @@ func getDeparturesDestination(endpoint *url.URL, origin, destination string) (*u
 	// checking for dodgy input data
 	switch {
 	case origin == "":
-		return nil, ErrEmptyLocation{}
+		return nil, ErrEmptyLocation
 	case destination == "":
-		return nil, ErrEmptyLocation{}
+		return nil, ErrEmptyLocation
 	case origin == destination:
-		return nil, ErrOriginEqualsDestination{location: origin}
+		return nil, ErrOriginEqualsDestination
 	}
 
 	// append path data to endpoint
@@ -177,7 +164,7 @@ func getServicesDate(endpoint *url.URL, origin string, date time.Time) (*url.URL
 
 	// checking for dodgy input data
 	if origin == "" {
-		return nil, ErrEmptyLocation{}
+		return nil, ErrEmptyLocation
 	}
 
 	// append path data to endpoint
@@ -213,7 +200,7 @@ func getServicesTime(endpoint *url.URL, origin string, date time.Time) (*url.URL
 
 	// checking for dodgy input data
 	if origin == "" {
-		return nil, ErrEmptyLocation{}
+		return nil, ErrEmptyLocation
 	}
 
 	// append path data to endpoint
@@ -249,7 +236,7 @@ func getServiceInfo(endpoint *url.URL, service string, date time.Time) (*url.URL
 
 	// checking for dodgy input data
 	if service == "" {
-		return nil, ErrEmptyLocation{}
+		return nil, ErrEmptyLocation
 	}
 
 	// append path data to endpoint
