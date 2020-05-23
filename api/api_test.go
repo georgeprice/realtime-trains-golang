@@ -165,8 +165,8 @@ func TestAPI(t *testing.T) {
 
 	})
 
-	t.Run("GetDepartures", func(t *testing.T) {
-		response, err := client.GetDepartures("MAN")
+	t.Run("Departures", func(t *testing.T) {
+		response, err := client.Departures("MAN")
 		switch {
 		case !reflect.DeepEqual(response, getDeparturesResponse):
 			t.Fatalf("Got wrong response, got %+v, expected %+v", response, getDeparturesResponse)
@@ -175,8 +175,8 @@ func TestAPI(t *testing.T) {
 		}
 	})
 
-	t.Run("GetDeparturesDestination", func(t *testing.T) {
-		response, err := client.GetDeparturesDestination("MAN", "BHM")
+	t.Run("DeparturesToDestination", func(t *testing.T) {
+		response, err := client.DeparturesToDestination("MAN", "BHM")
 		switch {
 		case !reflect.DeepEqual(response, getDeparturesDestinationResponse):
 			t.Fatalf("Got wrong response, got %+v, expected %+v", response, getDeparturesDestinationResponse)
@@ -185,8 +185,8 @@ func TestAPI(t *testing.T) {
 		}
 	})
 
-	t.Run("GetServicesDate", func(t *testing.T) {
-		response, err := client.GetServicesDate("MAN", time.Now())
+	t.Run("ServicesForDate", func(t *testing.T) {
+		response, err := client.ServicesForDate("MAN", time.Now())
 		switch {
 		case !reflect.DeepEqual(response, getServicesDateResponse):
 			t.Fatalf("Got wrong response, got %+v, expected %+v", response, getServicesDateResponse)
@@ -195,8 +195,8 @@ func TestAPI(t *testing.T) {
 		}
 	})
 
-	t.Run("GetServicesTime", func(t *testing.T) {
-		response, err := client.GetServicesTime("MAN", time.Now())
+	t.Run("ServicesForTime", func(t *testing.T) {
+		response, err := client.ServicesForTime("MAN", time.Now())
 		switch {
 		case !reflect.DeepEqual(response, getServicesTimeResponse):
 			t.Fatalf("Got wrong response, got %+v, expected %+v", response, getServicesTimeResponse)
@@ -205,8 +205,8 @@ func TestAPI(t *testing.T) {
 		}
 	})
 
-	t.Run("GetServiceInfo", func(t *testing.T) {
-		response, err := client.GetServiceInfo("W16631", time.Now())
+	t.Run("ServiceInfo", func(t *testing.T) {
+		response, err := client.ServiceInfo("W16631", time.Now())
 		switch {
 		case !reflect.DeepEqual(response, getServiceInfoResponse):
 			t.Fatalf("Got wrong response, got %+v, expected %+v", response, getServiceInfoResponse)
@@ -257,7 +257,7 @@ func TestAPI(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			_, err = client.GetDepartures("MAN")
+			_, err = client.Departures("MAN")
 			if err == nil {
 				t.Fatal("Got nil error, expected error")
 			}
@@ -277,7 +277,7 @@ func TestAPI(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			_, err = client.GetDepartures("MAN")
+			_, err = client.Departures("MAN")
 			if err == nil {
 				t.Fatal("Got nil error, expected error")
 			}
@@ -291,8 +291,8 @@ func TestAPI(t *testing.T) {
 			}
 		})
 
-		t.Run("GetDepartures", func(t *testing.T) {
-			_, err := client.GetDepartures("")
+		t.Run("Departures", func(t *testing.T) {
+			_, err := client.Departures("")
 			switch errType := err.(type) {
 			case nil:
 				t.Fatal("Got nil error, expected ErrEmptyLocation")
@@ -302,8 +302,8 @@ func TestAPI(t *testing.T) {
 			}
 		})
 
-		t.Run("GetDeparturesDestination", func(t *testing.T) {
-			_, err := client.GetDeparturesDestination("MAN", "")
+		t.Run("DeparturesToDestination", func(t *testing.T) {
+			_, err := client.DeparturesToDestination("MAN", "")
 			switch errType := err.(type) {
 			case nil:
 				t.Fatal("Got nil error, expected ErrEmptyLocation")
@@ -313,8 +313,8 @@ func TestAPI(t *testing.T) {
 			}
 		})
 
-		t.Run("GetServicesDate", func(t *testing.T) {
-			_, err := client.GetServicesDate("", time.Now())
+		t.Run("ServicesForDate", func(t *testing.T) {
+			_, err := client.ServicesForDate("", time.Now())
 			switch errType := err.(type) {
 			case nil:
 				t.Fatal("Got nil error, expected ErrEmptyLocation")
@@ -324,8 +324,8 @@ func TestAPI(t *testing.T) {
 			}
 		})
 
-		t.Run("GetServicesTime", func(t *testing.T) {
-			_, err := client.GetServicesTime("", time.Now())
+		t.Run("ServicesForTime", func(t *testing.T) {
+			_, err := client.ServicesForTime("", time.Now())
 			switch errType := err.(type) {
 			case nil:
 				t.Fatal("Got nil error, expected ErrEmptyLocation")
@@ -335,8 +335,8 @@ func TestAPI(t *testing.T) {
 			}
 		})
 
-		t.Run("GetServiceInfo", func(t *testing.T) {
-			_, err := client.GetServiceInfo("", time.Now())
+		t.Run("ServiceInfo", func(t *testing.T) {
+			_, err := client.ServiceInfo("", time.Now())
 			switch errType := err.(type) {
 			case nil:
 				t.Fatal("Got nil error, expected ErrEmptyLocation")

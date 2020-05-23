@@ -12,6 +12,31 @@ import (
 	"github.com/georgeprice/realtime-trains-golang/model"
 )
 
+// ErrEmptyLocation is returned when an empty location string is given for an endpoint
+type ErrEmptyLocation struct {
+}
+
+func (e ErrEmptyLocation) Error() string {
+	return "Empty location given"
+}
+
+// ErrOriginEqualsDestination is returned when a matching origin and destination are provided for an endpoint
+type ErrOriginEqualsDestination struct {
+	location string
+}
+
+func (e ErrOriginEqualsDestination) Error() string {
+	return fmt.Sprintf("Origin location is equal destination (%s)", e.location)
+}
+
+// ErrAuthenticationFailed is returned when API credentials aren't accepted
+type ErrAuthenticationFailed struct {
+}
+
+func (e ErrAuthenticationFailed) Error() string {
+	return "API Authentication failed"
+}
+
 // User contains data for a RTT API account, wrapping requests
 type User struct {
 	Username        string
@@ -69,8 +94,8 @@ func (c User) get(u *url.URL) (*http.Response, error) {
 	}
 }
 
-// GetDepartures returns all of the departures from a starting station
-func (c User) GetDepartures(origin string) (lineup model.Lineup, err error) {
+// Departures returns all of the departures from a starting station
+func (c User) Departures(origin string) (lineup model.Lineup, err error) {
 
 	// get the URL for this request
 	url, err := getDepartures(c.SearchEndpoint, origin)
@@ -94,8 +119,8 @@ func getDepartures(endpoint *url.URL, origin string) (*url.URL, error) {
 	return endpoint.Parse(origin)
 }
 
-// GetDeparturesDestination returns all of the departures from one station to another
-func (c User) GetDeparturesDestination(origin, destination string) (lineup model.Lineup, err error) {
+// DeparturesToDestination returns all of the departures from one station to another
+func (c User) DeparturesToDestination(origin, destination string) (lineup model.Lineup, err error) {
 
 	// get the URL for this request
 	url, err := getDeparturesDestination(c.SearchEndpoint, origin, destination)
@@ -130,8 +155,8 @@ func getDeparturesDestination(endpoint *url.URL, origin, destination string) (*u
 	return endpoint.Parse(ext)
 }
 
-// GetServicesDate returns all of the services on a given day
-func (c User) GetServicesDate(origin string, date time.Time) (lineup model.Lineup, err error) {
+// ServicesForDate returns all of the services on a given day
+func (c User) ServicesForDate(origin string, date time.Time) (lineup model.Lineup, err error) {
 
 	// send the get request for the custom resource endpoint
 	url, err := getServicesDate(c.SearchEndpoint, origin, date)
@@ -166,8 +191,8 @@ func getServicesDate(endpoint *url.URL, origin string, date time.Time) (*url.URL
 	return endpoint.Parse(ext)
 }
 
-// GetServicesTime returns all the services ot a given time
-func (c User) GetServicesTime(origin string, date time.Time) (lineup model.Lineup, err error) {
+// ServicesForTime returns all the services ot a given time
+func (c User) ServicesForTime(origin string, date time.Time) (lineup model.Lineup, err error) {
 
 	// send the get request for the custom resource endpoint
 	url, err := getServicesTime(c.SearchEndpoint, origin, date)
@@ -203,8 +228,8 @@ func getServicesTime(endpoint *url.URL, origin string, date time.Time) (*url.URL
 	return endpoint.Parse(ext)
 }
 
-// GetServiceInfo returns information about a specific service id
-func (c User) GetServiceInfo(id string, date time.Time) (service model.Service, err error) {
+// ServiceInfo returns information about a specific service id
+func (c User) ServiceInfo(id string, date time.Time) (service model.Service, err error) {
 
 	// send the get request for the custom resource endpoint
 	url, err := getServiceInfo(c.ServiceEndpoint, id, date)

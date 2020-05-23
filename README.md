@@ -56,28 +56,28 @@ type User struct {
 	Client          *http.Client
 }
 
-// GetDepartures returns all of the departures from a starting station
-func (c User) GetDepartures(origin string) (lineup model.Lineup, err error) {
+// Departures returns all of the departures from a starting station
+func (c User) Departures(origin string) (lineup model.Lineup, err error) {
 	// ... 
 }
 
-// GetDeparturesDestination returns all of the departures from one station to another
-func (c User) GetDeparturesDestination(origin, destination string) (lineup model.Lineup, err error) {
+// DeparturesToDestination returns all of the departures from one station to another
+func (c User) DeparturesToDestination(origin, destination string) (lineup model.Lineup, err error) {
 	// ...
 }
 
-// GetServicesDate returns all of the services on a given day
-func (c User) GetServicesDate(origin string, date time.Time) (lineup model.Lineup, err error) {
+// ServicesForDate returns all of the services on a given day
+func (c User) ServicesForDate(origin string, date time.Time) (lineup model.Lineup, err error) {
 	// ...
 }
 
-// GetServicesTime returns all the services ot a given time
-func (c User) GetServicesTime(origin string, date time.Time) (lineup model.Lineup, err error) {
+// ServicesForTime returns all the services ot a given time
+func (c User) ServicesForTime(origin string, date time.Time) (lineup model.Lineup, err error) {
 	// ...
 }
 
-// GetServiceInfo returns information about a specific service id
-func (c User) GetServiceInfo(id string, date time.Time) (service model.Service, err error) {
+// ServiceInfo returns information about a specific service id
+func (c User) ServiceInfo(id string, date time.Time) (service model.Service, err error) {
 	// ...
 }
 ```
@@ -96,12 +96,12 @@ if err != nil {
 user := api.New("username", "password", apiBase, http.Client{ /* ... */ })
 
 // getting departures...
-lineup, err := user.GetDepartures("MAN")
-lineup, err = user.GetDeparturesDestination("MAN", "BRM")
-lineup, err = user.GetServicesDate("MAN", time.Now())
-lineup, err = user.GetServicesTime("MAN", time.Now())
+lineup, err := user.Departures("MAN")
+lineup, err = user.DeparturesToDestination("MAN", "BRM")
+lineup, err = user.ServicesForDate("MAN", time.Now())
+lineup, err = user.ServicesForTime("MAN", time.Now())
 
 // getting service info...
-service, err := user.GetServiceInfo("W16631", time.Now())
+service, err := user.ServiceInfo("W16631", time.Now())
 
 ```
