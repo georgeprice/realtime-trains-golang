@@ -131,7 +131,7 @@ func mockServer() http.HandlerFunc {
 
 func TestAPI(t *testing.T) {
 	var (
-		client API
+		client User
 		server *httptest.Server
 	)
 
@@ -231,8 +231,7 @@ func TestAPI(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			badUser := badClient.(*user)
-			_, err = badUser.get(badBase)
+			_, err = badClient.get(badBase)
 			if err == nil {
 				t.Fatal(err)
 			}

@@ -42,25 +42,41 @@ The __API__ package provides an easier way to retrieve data from the Realtime Tr
 
 [Realtime Trains API Docs](https://www.realtimetrains.co.uk/about/developer/pull/docs/)
 
-### Interface
+### Features
 
 ```go
-// API handles interacting with a RTT REST service
-type API interface {
-	// /json/search/<station>
-	GetDepartures(origin string) (model.Lineup, error)
+// User contains data for a RTT API account, wrapping requests
+type User struct {
+	Username        string
+	Password        string
+	SearchEndpoint  *url.URL
+	ServiceEndpoint *url.URL
+	Client          *http.Client
+}
 
-	// /json/search/<station>/to/<toStation>
-	GetDeparturesDestination(origin, destination string) (model.Lineup, error)
+// GetDepartures returns all of the departures from a starting station
+func (c User) GetDepartures(origin string) (lineup model.Lineup, err error) {
+	// ... 
+}
 
-	// /json/search/<station>/<year>/<month>/<day>
-	GetServicesDate(origin string, date time.Time) (model.Lineup, error)
+// GetDeparturesDestination returns all of the departures from one station to another
+func (c User) GetDeparturesDestination(origin, destination string) (lineup model.Lineup, err error) {
+	// ...
+}
 
-	// /json/search/<station>/<year>/<month>/<day>/<time>
-	GetServicesTime(origin string, date time.Time) (model.Lineup, error)
+// GetServicesDate returns all of the services on a given day
+func (c User) GetServicesDate(origin string, date time.Time) (lineup model.Lineup, err error) {
+	// ...
+}
 
-	// /json/service/<serviceUid>/<year>/<month>/<day>
-	GetServiceInfo(service string, date time.Time) (model.Service, error)
+// GetServicesTime returns all the services ot a given time
+func (c User) GetServicesTime(origin string, date time.Time) (lineup model.Lineup, err error) {
+	// ...
+}
+
+// GetServiceInfo returns information about a specific service id
+func (c User) GetServiceInfo(id string, date time.Time) (service model.Service, err error) {
+	// ...
 }
 ```
 

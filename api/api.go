@@ -12,53 +12,36 @@ import (
 	"github.com/georgeprice/realtime-trains-golang/model"
 )
 
-type user struct {
-	username        string
-	password        string
-	searchEndpoint  *url.URL
-	serviceEndpoint *url.URL
-	client          *http.Client
+// User contains data for a RTT API account, wrapping requests
+type User struct {
+	Username        string
+	Password        string
+	SearchEndpoint  *url.URL
+	ServiceEndpoint *url.URL
+	Client          *http.Client
 }
 
 // New creates a new user login for RTT
-func New(username, password string, baseURL *url.URL, client *http.Client) (API, error) {
+func New(username, password string, baseURL *url.URL, client *http.Client) (User, error) {
 
 	// create the search endpoint from the base URL
 	searchEndpoint, err := baseURL.Parse("/search/")
 	if err != nil {
-		return nil, err
+		return User{}, err
 	}
 
 	// create the service endpoint from the base URL
 	serviceEndpoint, err := baseURL.Parse("/service/")
-	return &user{
-		username:        username,
-		password:        password,
-		searchEndpoint:  searchEndpoint,
-		serviceEndpoint: serviceEndpoint,
-		client:          client,
+	return User{
+		Username:        username,
+		Password:        password,
+		SearchEndpoint:  searchEndpoint,
+		ServiceEndpoint: serviceEndpoint,
+		Client:          client,
 	}, err
 }
 
-// API handles interacting with a RTT REST service
-type API interface {
-	// /json/search/<station>
-	GetDepartures(origin string) (model.Lineup, error)
-
-	// /json/search/<station>/to/<toStation>
-	GetDeparturesDestination(origin, destination string) (model.Lineup, error)
-
-	// /json/search/<station>/<year>/<month>/<day>
-	GetServicesDate(origin string, date time.Time) (model.Lineup, error)
-
-	// /json/search/<station>/<year>/<month>/<day>/<time>
-	GetServicesTime(origin string, date time.Time) (model.Lineup, error)
-
-	// /json/service/<serviceUid>/<year>/<month>/<day>
-	GetServiceInfo(service string, date time.Time) (model.Service, error)
-}
-
-func (c user) get(u *url.URL) (*http.Response, error) {
+func (c User) get(u *url.URL) (*http.Response, error) {
 
 	// setup the basic GET request
 	req, err := http.NewRequest(http.MethodGet, u.String(), nil)
@@ -66,14 +49,18 @@ func (c user) get(u *url.URL) (*http.Response, error) {
 		return nil, err
 	}
 
-	// add authentication, send the request
-	req.SetBasicAuth(c.username, c.password)
-	resp, err := c.client.Do(req)
+	// Add authentication
+	if c.Username != "" && c.Password != "" {
+		req.SetBasicAuth(c.Username, c.Password)
+	}
 
+	// send the request to the API
+	resp, err := c.Client.Do(req)
 	if err != nil {
 		return resp, err
 	}
 
+	// check the response status code, return custom error
 	switch resp.StatusCode {
 	case http.StatusUnauthorized:
 		return nil, ErrAuthenticationFailed{}
@@ -83,10 +70,10 @@ func (c user) get(u *url.URL) (*http.Response, error) {
 }
 
 // GetDepartures returns all of the departures from a starting station
-func (c user) GetDepartures(origin string) (lineup model.Lineup, err error) {
+func (c User) GetDepartures(origin string) (lineup model.Lineup, err error) {
 
-	// send the get request for the custom resource endpoint
-	url, err := getDepartures(c.searchEndpoint, origin)
+	// get the URL for this request
+	url, err := getDepartures(c.SearchEndpoint, origin)
 	if err != nil {
 		return lineup, err
 	}
@@ -96,7 +83,6 @@ func (c user) GetDepartures(origin string) (lineup model.Lineup, err error) {
 	if err == nil {
 		err = json.NewDecoder(resp.Body).Decode(&lineup)
 	}
-
 	return lineup, err
 }
 
@@ -109,9 +95,10 @@ func getDepartures(endpoint *url.URL, origin string) (*url.URL, error) {
 }
 
 // GetDeparturesDestination returns all of the departures from one station to another
-func (c user) GetDeparturesDestination(origin, destination string) (lineup model.Lineup, err error) {
+func (c User) GetDeparturesDestination(origin, destination string) (lineup model.Lineup, err error) {
 
-	url, err := getDeparturesDestination(c.searchEndpoint, origin, destination)
+	// get the URL for this request
+	url, err := getDeparturesDestination(c.SearchEndpoint, origin, destination)
 	if err != nil {
 		return lineup, err
 	}
@@ -127,6 +114,7 @@ func (c user) GetDeparturesDestination(origin, destination string) (lineup model
 // creates the url to access a lineup resource from an origin to a destination
 func getDeparturesDestination(endpoint *url.URL, origin, destination string) (*url.URL, error) {
 
+	// checking for dodgy input data
 	switch {
 	case origin == "":
 		return nil, ErrEmptyLocation{}
@@ -136,16 +124,17 @@ func getDeparturesDestination(endpoint *url.URL, origin, destination string) (*u
 		return nil, ErrOriginEqualsDestination{location: origin}
 	}
 
+	// append path data to endpoint
 	paths := []string{origin, "to", destination}
 	ext := strings.Join(paths, "/")
 	return endpoint.Parse(ext)
 }
 
 // GetServicesDate returns all of the services on a given day
-func (c user) GetServicesDate(origin string, date time.Time) (lineup model.Lineup, err error) {
+func (c User) GetServicesDate(origin string, date time.Time) (lineup model.Lineup, err error) {
 
 	// send the get request for the custom resource endpoint
-	url, err := getServicesDate(c.searchEndpoint, origin, date)
+	url, err := getServicesDate(c.SearchEndpoint, origin, date)
 	if err != nil {
 		return lineup, err
 	}
@@ -161,10 +150,12 @@ func (c user) GetServicesDate(origin string, date time.Time) (lineup model.Lineu
 // creates a url to access the service resource from an origin station, on a given date
 func getServicesDate(endpoint *url.URL, origin string, date time.Time) (*url.URL, error) {
 
+	// checking for dodgy input data
 	if origin == "" {
 		return nil, ErrEmptyLocation{}
 	}
 
+	// append path data to endpoint
 	paths := []string{
 		origin,
 		strconv.Itoa(date.Year()),
@@ -176,10 +167,10 @@ func getServicesDate(endpoint *url.URL, origin string, date time.Time) (*url.URL
 }
 
 // GetServicesTime returns all the services ot a given time
-func (c user) GetServicesTime(origin string, date time.Time) (lineup model.Lineup, err error) {
+func (c User) GetServicesTime(origin string, date time.Time) (lineup model.Lineup, err error) {
 
 	// send the get request for the custom resource endpoint
-	url, err := getServicesTime(c.searchEndpoint, origin, date)
+	url, err := getServicesTime(c.SearchEndpoint, origin, date)
 	if err != nil {
 		return lineup, err
 	}
@@ -195,10 +186,12 @@ func (c user) GetServicesTime(origin string, date time.Time) (lineup model.Lineu
 // creates a url to access the service resource from an origin station, at a given time
 func getServicesTime(endpoint *url.URL, origin string, date time.Time) (*url.URL, error) {
 
+	// checking for dodgy input data
 	if origin == "" {
 		return nil, ErrEmptyLocation{}
 	}
 
+	// append path data to endpoint
 	paths := []string{
 		origin,
 		strconv.Itoa(date.Year()),
@@ -210,10 +203,11 @@ func getServicesTime(endpoint *url.URL, origin string, date time.Time) (*url.URL
 	return endpoint.Parse(ext)
 }
 
-func (c user) GetServiceInfo(id string, date time.Time) (service model.Service, err error) {
+// GetServiceInfo returns information about a specific service id
+func (c User) GetServiceInfo(id string, date time.Time) (service model.Service, err error) {
 
 	// send the get request for the custom resource endpoint
-	url, err := getServiceInfo(c.serviceEndpoint, id, date)
+	url, err := getServiceInfo(c.ServiceEndpoint, id, date)
 	if err != nil {
 		return service, err
 	}
@@ -227,10 +221,13 @@ func (c user) GetServiceInfo(id string, date time.Time) (service model.Service, 
 }
 
 func getServiceInfo(endpoint *url.URL, service string, date time.Time) (*url.URL, error) {
+
+	// checking for dodgy input data
 	if service == "" {
 		return nil, ErrEmptyLocation{}
 	}
 
+	// append path data to endpoint
 	paths := []string{
 		service,
 		strconv.Itoa(date.Year()),
