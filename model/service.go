@@ -1,9 +1,5 @@
 package model
 
-import (
-	"reflect"
-)
-
 // ServiceType describes what type of train is running
 type ServiceType string
 
@@ -35,12 +31,6 @@ type Service struct {
 	RealtimeActivated    bool             `json:"realtimeActivated,omitempty"`
 	RunningIdentity      string           `json:"runningIdentity,omitempty"`
 	PlannedCancel        bool             `json:"plannedCancel,omitempty"`
-}
-
-// FresherThan returns whether another service struct contains more up-to-date data
-//	I just assume that different data is newer data lol
-func (s Service) FresherThan(thou Service) bool {
-	return !reflect.DeepEqual(s, thou)
 }
 
 // Pair describes a start or end of a train's journey (don't ask)

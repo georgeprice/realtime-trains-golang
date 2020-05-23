@@ -4,109 +4,349 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/http/httptest"
 	"net/url"
-	"os"
-	"path"
 	"reflect"
+	"strings"
 	"testing"
 	"time"
+
+	"github.com/georgeprice/realtime-trains-golang/model"
 )
 
-type credentials struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
+const (
+	username = "username"
+	password = "password"
+)
+
+var (
+	getDeparturesResponse = model.Lineup{
+		Location: model.LocationDetailHeader{
+			Name: "getDeparturesResponse",
+		},
+	}
+	getDeparturesDestinationResponse = model.Lineup{
+		Location: model.LocationDetailHeader{
+			Name: "getDeparturesDestinationResponse",
+		},
+	}
+	getServicesDateResponse = model.Lineup{
+		Location: model.LocationDetailHeader{
+			Name: "getServicesDateResponse",
+		},
+	}
+	getServicesTimeResponse = model.Lineup{
+		Location: model.LocationDetailHeader{
+			Name: "getServicesTimeResponse",
+		},
+	}
+	getServiceInfoResponse = model.Service{
+		ServiceUID: "getServiceInfoResponse",
+	}
+)
+
+func mockServer() http.HandlerFunc {
+
+	// searchHandler will write back responses for search endpoint parameters
+	searchHandler := func(rw http.ResponseWriter, params ...string) {
+
+		var (
+			encodeError  error
+			requestError error
+			encoder      = json.NewEncoder(rw)
+		)
+
+		// perform action based on request type
+		switch len(params) {
+		case 1:
+			encodeError = encoder.Encode(getDeparturesResponse)
+		case 3:
+			encodeError = encoder.Encode(getDeparturesDestinationResponse)
+		case 4:
+			encodeError = encoder.Encode(getServicesDateResponse)
+		case 5:
+			encodeError = encoder.Encode(getServicesTimeResponse)
+		default:
+			requestError = fmt.Errorf("Search request not recognised w/ params %+v", params)
+		}
+
+		// setting response header based on errors
+		switch {
+		case encodeError != nil:
+			rw.WriteHeader(http.StatusInternalServerError)
+		case requestError != nil:
+			rw.WriteHeader(http.StatusBadRequest)
+		}
+
+	}
+
+	// service handler will write back response for service endpoint parameters
+	serviceHandler := func(rw http.ResponseWriter, params ...string) {
+
+		var (
+			encodeError  error
+			requestError error
+			encoder      = json.NewEncoder(rw)
+		)
+
+		// perform action based on request type
+		switch len(params) {
+		case 5:
+			encodeError = encoder.Encode(getServiceInfoResponse)
+		default:
+			requestError = fmt.Errorf("Service request not recognised w/ params %+v", params)
+		}
+
+		// setting response header based on errors
+		switch {
+		case encodeError != nil:
+			rw.WriteHeader(http.StatusInternalServerError)
+		case requestError != nil:
+			rw.WriteHeader(http.StatusBadRequest)
+		}
+	}
+
+	// entry-point handler for requests, delegates to search and service handlers
+	return func(rw http.ResponseWriter, req *http.Request) {
+
+		// check authentication
+		user, pass, ok := req.BasicAuth()
+		if !ok || user != username || pass != password {
+			rw.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+
+		paths := strings.Split(req.URL.Path, "/")
+		command := paths[1]
+		switch command {
+		case "search":
+			searchHandler(rw, paths[2:]...)
+		case "service":
+			serviceHandler(rw, paths[2:]...)
+		default:
+			rw.WriteHeader(http.StatusNotFound)
+		}
+	}
 }
 
 func TestAPI(t *testing.T) {
 	var (
-		login  credentials
 		client API
+		server *httptest.Server
 	)
 
-	t.Run("load-credentials-file", func(t *testing.T) {
-
-		// get working directory
-		wd, err := os.Getwd()
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		// create path to test credentials JSON file
-		p := path.Join(wd, "test-credentials.json")
-
-		// open the file up
-		f, err := os.Open(p)
-		if err != nil {
-			t.Fatal(err)
-		}
-		defer f.Close()
-
-		// unpack the file contents into our login struct
-		err = json.NewDecoder(f).Decode(&login)
-		if err != nil {
-			t.Fatal(err)
-		}
-	})
-
-	t.Run("create-api-login", func(t *testing.T) {
-		var err error
-		client, err = New(login.Username, login.Password, &http.Client{Timeout: time.Second})
-		switch err {
+	// closing down the test server
+	defer func() {
+		switch server {
 		case nil:
-			t.Logf("Using test credentials {%+v}", login)
+			t.Fatal("Got nil http test server, cannot close")
 		default:
+			server.Close()
+		}
+	}()
+
+	// set up client and server for API testing
+	t.Run("setup", func(t *testing.T) {
+
+		// setup mock server, for accepting requests
+		server = httptest.NewServer(mockServer())
+
+		// create base URL for requests
+		base, err := url.Parse(server.URL)
+		if err != nil {
 			t.Fatal(err)
 		}
+
+		// create client for interacting with mock API
+		client, err = New(username, password, base, &http.Client{})
+		if err != nil {
+			t.Fatal(err)
+		}
+
 	})
 
 	t.Run("GetDepartures", func(t *testing.T) {
-		lineup, err := client.GetDepartures("MAN")
-		switch err {
-		case nil:
-			t.Logf("Got lineup %+v", lineup)
-		default:
+		response, err := client.GetDepartures("MAN")
+		switch {
+		case !reflect.DeepEqual(response, getDeparturesResponse):
+			t.Fatalf("Got wrong response, got %+v, expected %+v", response, getDeparturesResponse)
+		case err != nil:
 			t.Fatal(err)
 		}
 	})
 
 	t.Run("GetDeparturesDestination", func(t *testing.T) {
-		lineup, err := client.GetDeparturesDestination("MAN", "BHM")
-		switch err {
-		case nil:
-			t.Logf("Got lineup %+v", lineup)
-		default:
+		response, err := client.GetDeparturesDestination("MAN", "BHM")
+		switch {
+		case !reflect.DeepEqual(response, getDeparturesDestinationResponse):
+			t.Fatalf("Got wrong response, got %+v, expected %+v", response, getDeparturesDestinationResponse)
+		case err != nil:
 			t.Fatal(err)
 		}
 	})
 
 	t.Run("GetServicesDate", func(t *testing.T) {
-		lineup, err := client.GetServicesDate("MAN", time.Now())
-		switch err {
-		case nil:
-			t.Logf("Got lineup %+v", lineup)
-		default:
+		response, err := client.GetServicesDate("MAN", time.Now())
+		switch {
+		case !reflect.DeepEqual(response, getServicesDateResponse):
+			t.Fatalf("Got wrong response, got %+v, expected %+v", response, getServicesDateResponse)
+		case err != nil:
 			t.Fatal(err)
 		}
 	})
 
 	t.Run("GetServicesTime", func(t *testing.T) {
-		lineup, err := client.GetServicesTime("MAN", time.Now())
-		switch err {
-		case nil:
-			t.Logf("Got lineup %+v", lineup)
-		default:
+		response, err := client.GetServicesTime("MAN", time.Now())
+		switch {
+		case !reflect.DeepEqual(response, getServicesTimeResponse):
+			t.Fatalf("Got wrong response, got %+v, expected %+v", response, getServicesTimeResponse)
+		case err != nil:
 			t.Fatal(err)
 		}
 	})
 
 	t.Run("GetServiceInfo", func(t *testing.T) {
-		service, err := client.GetServicesTime("W16631", time.Now())
-		switch err {
-		case nil:
-			t.Logf("Got service %+v", service)
-		default:
+		response, err := client.GetServiceInfo("W16631", time.Now())
+		switch {
+		case !reflect.DeepEqual(response, getServiceInfoResponse):
+			t.Fatalf("Got wrong response, got %+v, expected %+v", response, getServiceInfoResponse)
+		case err != nil:
 			t.Fatal(err)
 		}
+	})
+
+	t.Run("Errors", func(t *testing.T) {
+
+		t.Run("Bad Base", func(t *testing.T) {
+
+			// create base URL for requests
+			badBase := &url.URL{
+				Scheme: "fakeScheme!!!",
+				Host:   "fakeHost!!!",
+			}
+
+			// create client for interacting with mock API
+			badClient, err := New(username, password, badBase, &http.Client{})
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			badUser := badClient.(*user)
+			_, err = badUser.get(badBase)
+			if err == nil {
+				t.Fatal(err)
+			}
+
+		})
+
+		t.Run("Cannot Connect", func(t *testing.T) {
+
+			// setup mock server, for accepting requests
+			badServer := httptest.NewServer(mockServer())
+
+			badServer.Close()
+
+			// create base URL for requests
+			base, err := url.Parse(badServer.URL)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			// create client for interacting with mock API
+			client, err := New(username, password, base, &http.Client{})
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			_, err = client.GetDepartures("MAN")
+			if err == nil {
+				t.Fatal("Got nil error, expected error")
+			}
+		})
+
+		t.Run("Unauthorized", func(t *testing.T) {
+
+			// create base URL for requests
+			base, err := url.Parse(server.URL)
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			// create client for interacting with mock API
+			client, err := New("fake", "fake", base, &http.Client{})
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			_, err = client.GetDepartures("MAN")
+			if err == nil {
+				t.Fatal("Got nil error, expected error")
+			}
+
+			switch errType := err.(type) {
+			case nil:
+				t.Fatal("Got nil error, expected ErrAuthenticationFailed")
+			case ErrAuthenticationFailed:
+			default:
+				t.Fatalf("Got wrong error type, got %+v", errType)
+			}
+		})
+
+		t.Run("GetDepartures", func(t *testing.T) {
+			_, err := client.GetDepartures("")
+			switch errType := err.(type) {
+			case nil:
+				t.Fatal("Got nil error, expected ErrEmptyLocation")
+			case ErrEmptyLocation:
+			default:
+				t.Fatalf("Got wrong error type, got %+v", errType)
+			}
+		})
+
+		t.Run("GetDeparturesDestination", func(t *testing.T) {
+			_, err := client.GetDeparturesDestination("MAN", "")
+			switch errType := err.(type) {
+			case nil:
+				t.Fatal("Got nil error, expected ErrEmptyLocation")
+			case ErrEmptyLocation:
+			default:
+				t.Fatalf("Got wrong error type, got %+v", errType)
+			}
+		})
+
+		t.Run("GetServicesDate", func(t *testing.T) {
+			_, err := client.GetServicesDate("", time.Now())
+			switch errType := err.(type) {
+			case nil:
+				t.Fatal("Got nil error, expected ErrEmptyLocation")
+			case ErrEmptyLocation:
+			default:
+				t.Fatalf("Got wrong error type, got %+v", errType)
+			}
+		})
+
+		t.Run("GetServicesTime", func(t *testing.T) {
+			_, err := client.GetServicesTime("", time.Now())
+			switch errType := err.(type) {
+			case nil:
+				t.Fatal("Got nil error, expected ErrEmptyLocation")
+			case ErrEmptyLocation:
+			default:
+				t.Fatalf("Got wrong error type, got %+v", errType)
+			}
+		})
+
+		t.Run("GetServiceInfo", func(t *testing.T) {
+			_, err := client.GetServiceInfo("", time.Now())
+			switch errType := err.(type) {
+			case nil:
+				t.Fatal("Got nil error, expected ErrEmptyLocation")
+			case ErrEmptyLocation:
+			default:
+				t.Fatalf("Got wrong error type, got %+v", errType)
+			}
+		})
+
 	})
 
 }
@@ -140,15 +380,44 @@ func (t test) check(gotURL *url.URL, gotErr error) error {
 }
 
 func TestURLs(t *testing.T) {
+
+	var (
+		searchEndpoint  *url.URL
+		serviceEndpoint *url.URL
+	)
+
+	const (
+		base        = "https://api.rtt.io/api/v1/json/"
+		searchBase  = base + "search/"
+		serviceBase = base + "service/"
+	)
+
+	t.Run("setup", func(t *testing.T) {
+		var err error
+
+		// create the search endpoint URL object
+		searchEndpoint, err = url.Parse(searchBase)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		// create the service endpoint URL object
+		serviceEndpoint, err = url.Parse(serviceBase)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+	})
+
 	t.Run("getDepartures", func(t *testing.T) {
 		ts := []test{
 			test{
 				origin: "MAN",
-				urlStr: "https://api.rtt.io/api/v1/json/search/MAN",
+				urlStr: searchBase + "MAN",
 			},
 			test{
 				origin: "BRM",
-				urlStr: "https://api.rtt.io/api/v1/json/search/BRM",
+				urlStr: searchBase + "BRM",
 			},
 			test{
 				origin: "",
@@ -157,7 +426,7 @@ func TestURLs(t *testing.T) {
 		}
 
 		for _, tc := range ts {
-			gotURL, err := getDepartures(tc.origin)
+			gotURL, err := getDepartures(searchEndpoint, tc.origin)
 			err = tc.check(gotURL, err)
 			if err != nil {
 				t.Error(err.Error())
@@ -171,12 +440,12 @@ func TestURLs(t *testing.T) {
 			test{
 				origin:      "MAN",
 				destination: "BRM",
-				urlStr:      "https://api.rtt.io/api/v1/json/search/MAN/to/BRM",
+				urlStr:      searchBase + "MAN/to/BRM",
 			},
 			test{
 				origin:      "BOMO",
 				destination: "BRM",
-				urlStr:      "https://api.rtt.io/api/v1/json/search/BOMO/to/BRM",
+				urlStr:      searchBase + "BOMO/to/BRM",
 			},
 			test{
 				origin:      "MAN",
@@ -201,7 +470,7 @@ func TestURLs(t *testing.T) {
 		}
 
 		for _, tc := range ts {
-			gotURL, err := getDeparturesDestination(tc.origin, tc.destination)
+			gotURL, err := getDeparturesDestination(searchEndpoint, tc.origin, tc.destination)
 			err = tc.check(gotURL, err)
 			if err != nil {
 				t.Error(err.Error())
@@ -215,7 +484,7 @@ func TestURLs(t *testing.T) {
 			test{
 				origin: "MAN",
 				date:   time.Date(2020, 2, 3, 4, 5, 6, 0, &time.Location{}),
-				urlStr: "https://api.rtt.io/api/v1/json/search/MAN/2020/02/03",
+				urlStr: searchBase + "MAN/2020/02/03",
 			},
 			test{
 				origin: "",
@@ -225,7 +494,7 @@ func TestURLs(t *testing.T) {
 		}
 
 		for _, tc := range ts {
-			gotURL, err := getServicesDate(tc.origin, tc.date)
+			gotURL, err := getServicesDate(searchEndpoint, tc.origin, tc.date)
 			err = tc.check(gotURL, err)
 			if err != nil {
 				t.Error(err.Error())
@@ -239,7 +508,7 @@ func TestURLs(t *testing.T) {
 			test{
 				origin: "MAN",
 				date:   time.Date(2020, 2, 3, 4, 5, 6, 0, &time.Location{}),
-				urlStr: "https://api.rtt.io/api/v1/json/search/MAN/2020/02/03/0405",
+				urlStr: searchBase + "MAN/2020/02/03/0405",
 			},
 			test{
 				origin: "",
@@ -248,7 +517,7 @@ func TestURLs(t *testing.T) {
 			},
 		}
 		for _, tc := range ts {
-			gotURL, err := getServicesTime(tc.origin, tc.date)
+			gotURL, err := getServicesTime(searchEndpoint, tc.origin, tc.date)
 			err = tc.check(gotURL, err)
 			if err != nil {
 				t.Error(err.Error())
@@ -262,7 +531,7 @@ func TestURLs(t *testing.T) {
 			test{
 				origin: "serviceName",
 				date:   time.Date(2020, 2, 3, 4, 5, 6, 0, &time.Location{}),
-				urlStr: "https://api.rtt.io/api/v1/json/service/serviceName/2020/02/03/0405",
+				urlStr: serviceBase + "serviceName/2020/02/03/0405",
 			},
 			test{
 				origin: "",
@@ -271,7 +540,7 @@ func TestURLs(t *testing.T) {
 			},
 		}
 		for _, tc := range ts {
-			gotURL, err := getServiceInfo(tc.origin, tc.date)
+			gotURL, err := getServiceInfo(serviceEndpoint, tc.origin, tc.date)
 			err = tc.check(gotURL, err)
 			if err != nil {
 				t.Error(err.Error())

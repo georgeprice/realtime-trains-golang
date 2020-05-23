@@ -12,22 +12,32 @@ import (
 	"github.com/georgeprice/realtime-trains-golang/model"
 )
 
-var (
-	searchEndpoint, _  = url.Parse("https://api.rtt.io/api/v1/json/search/")
-	serviceEndpoint, _ = url.Parse("https://api.rtt.io/api/v1/json/service/")
-)
-
 type user struct {
-	username, password string
-	client             *http.Client
+	username        string
+	password        string
+	searchEndpoint  *url.URL
+	serviceEndpoint *url.URL
+	client          *http.Client
 }
 
 // New creates a new user login for RTT
-func New(username, password string, client *http.Client) (API, error) {
+func New(username, password string, baseURL *url.URL, client *http.Client) (API, error) {
+
+	// create the search endpoint from the base URL
+	searchEndpoint, err := baseURL.Parse("/search/")
+	if err != nil {
+		return nil, err
+	}
+
+	// create the service endpoint from the base URL
+	serviceEndpoint, err := baseURL.Parse("/service/")
 	return &user{
-		username: username, password: password,
-		client: client,
-	}, nil
+		username:        username,
+		password:        password,
+		searchEndpoint:  searchEndpoint,
+		serviceEndpoint: serviceEndpoint,
+		client:          client,
+	}, err
 }
 
 // API handles interacting with a RTT REST service
@@ -76,7 +86,7 @@ func (c user) get(u *url.URL) (*http.Response, error) {
 func (c user) GetDepartures(origin string) (lineup model.Lineup, err error) {
 
 	// send the get request for the custom resource endpoint
-	url, err := searchEndpoint.Parse(origin)
+	url, err := getDepartures(c.searchEndpoint, origin)
 	if err != nil {
 		return lineup, err
 	}
@@ -91,17 +101,17 @@ func (c user) GetDepartures(origin string) (lineup model.Lineup, err error) {
 }
 
 // creates the url to access a lineup resource from an origin
-func getDepartures(origin string) (*url.URL, error) {
+func getDepartures(endpoint *url.URL, origin string) (*url.URL, error) {
 	if origin == "" {
 		return nil, ErrEmptyLocation{}
 	}
-	return searchEndpoint.Parse(origin)
+	return endpoint.Parse(origin)
 }
 
 // GetDeparturesDestination returns all of the departures from one station to another
 func (c user) GetDeparturesDestination(origin, destination string) (lineup model.Lineup, err error) {
 
-	url, err := getDeparturesDestination(origin, destination)
+	url, err := getDeparturesDestination(c.searchEndpoint, origin, destination)
 	if err != nil {
 		return lineup, err
 	}
@@ -115,7 +125,7 @@ func (c user) GetDeparturesDestination(origin, destination string) (lineup model
 }
 
 // creates the url to access a lineup resource from an origin to a destination
-func getDeparturesDestination(origin, destination string) (*url.URL, error) {
+func getDeparturesDestination(endpoint *url.URL, origin, destination string) (*url.URL, error) {
 
 	switch {
 	case origin == "":
@@ -128,14 +138,14 @@ func getDeparturesDestination(origin, destination string) (*url.URL, error) {
 
 	paths := []string{origin, "to", destination}
 	ext := strings.Join(paths, "/")
-	return searchEndpoint.Parse(ext)
+	return endpoint.Parse(ext)
 }
 
 // GetServicesDate returns all of the services on a given day
 func (c user) GetServicesDate(origin string, date time.Time) (lineup model.Lineup, err error) {
 
 	// send the get request for the custom resource endpoint
-	url, err := getServicesDate(origin, date)
+	url, err := getServicesDate(c.searchEndpoint, origin, date)
 	if err != nil {
 		return lineup, err
 	}
@@ -149,7 +159,7 @@ func (c user) GetServicesDate(origin string, date time.Time) (lineup model.Lineu
 }
 
 // creates a url to access the service resource from an origin station, on a given date
-func getServicesDate(origin string, date time.Time) (*url.URL, error) {
+func getServicesDate(endpoint *url.URL, origin string, date time.Time) (*url.URL, error) {
 
 	if origin == "" {
 		return nil, ErrEmptyLocation{}
@@ -162,14 +172,14 @@ func getServicesDate(origin string, date time.Time) (*url.URL, error) {
 		fmt.Sprintf("%02d", date.Day()),
 	}
 	ext := strings.Join(paths, "/")
-	return searchEndpoint.Parse(ext)
+	return endpoint.Parse(ext)
 }
 
 // GetServicesTime returns all the services ot a given time
 func (c user) GetServicesTime(origin string, date time.Time) (lineup model.Lineup, err error) {
 
 	// send the get request for the custom resource endpoint
-	url, err := getServicesTime(origin, date)
+	url, err := getServicesTime(c.searchEndpoint, origin, date)
 	if err != nil {
 		return lineup, err
 	}
@@ -183,7 +193,7 @@ func (c user) GetServicesTime(origin string, date time.Time) (lineup model.Lineu
 }
 
 // creates a url to access the service resource from an origin station, at a given time
-func getServicesTime(origin string, date time.Time) (*url.URL, error) {
+func getServicesTime(endpoint *url.URL, origin string, date time.Time) (*url.URL, error) {
 
 	if origin == "" {
 		return nil, ErrEmptyLocation{}
@@ -197,13 +207,13 @@ func getServicesTime(origin string, date time.Time) (*url.URL, error) {
 		fmt.Sprintf("%02d%02d", date.Hour(), date.Minute()),
 	}
 	ext := strings.Join(paths, "/")
-	return searchEndpoint.Parse(ext)
+	return endpoint.Parse(ext)
 }
 
 func (c user) GetServiceInfo(id string, date time.Time) (service model.Service, err error) {
 
 	// send the get request for the custom resource endpoint
-	url, err := getServiceInfo(id, date)
+	url, err := getServiceInfo(c.serviceEndpoint, id, date)
 	if err != nil {
 		return service, err
 	}
@@ -216,7 +226,7 @@ func (c user) GetServiceInfo(id string, date time.Time) (service model.Service, 
 	return service, err
 }
 
-func getServiceInfo(service string, date time.Time) (*url.URL, error) {
+func getServiceInfo(endpoint *url.URL, service string, date time.Time) (*url.URL, error) {
 	if service == "" {
 		return nil, ErrEmptyLocation{}
 	}
@@ -229,5 +239,5 @@ func getServiceInfo(service string, date time.Time) (*url.URL, error) {
 		fmt.Sprintf("%02d%02d", date.Hour(), date.Minute()),
 	}
 	ext := strings.Join(paths, "/")
-	return serviceEndpoint.Parse(ext)
+	return endpoint.Parse(ext)
 }
