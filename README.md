@@ -67,8 +67,15 @@ type API interface {
 ### Basic usage
 Create a struct to hold login credentials, use methods to get data.
 ```go
+
+// create base URL where RTT API is hosted
+apiBase, err := url.Parse(/* ... */)
+if err != nil {
+	// ...
+}
+
 // create a struct to hold your credentials
-user := api.New("username", "password", http.Client{ /* ... */ })
+user := api.New("username", "password", apiBase, http.Client{ /* ... */ })
 
 // getting departures...
 lineup, err := user.GetDepartures("MAN")
