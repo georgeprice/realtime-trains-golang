@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"path"
 	"strconv"
 	"strings"
 	"time"
@@ -37,18 +38,18 @@ type User struct {
 func New(username, password string, baseURL *url.URL, client *http.Client) (User, error) {
 
 	// create the search endpoint from the base URL
-	searchEndpoint, err := baseURL.Parse("/search/")
+	searchURL, err := baseURL.Parse(path.Join(baseURL.Path, "search"))
 	if err != nil {
 		return User{}, err
 	}
 
 	// create the service endpoint from the base URL
-	serviceEndpoint, err := baseURL.Parse("/service/")
+	serviceURL, err := baseURL.Parse(path.Join(baseURL.Path, "service"))
 	return User{
 		Username:        username,
 		Password:        password,
-		SearchEndpoint:  searchEndpoint,
-		ServiceEndpoint: serviceEndpoint,
+		SearchEndpoint:  searchURL,
+		ServiceEndpoint: serviceURL,
 		Client:          client,
 	}, err
 }
@@ -103,7 +104,7 @@ func getDepartures(endpoint *url.URL, origin string) (*url.URL, error) {
 	if origin == "" {
 		return nil, ErrEmptyLocation
 	}
-	return endpoint.Parse(origin)
+	return endpoint.Parse(path.Join(endpoint.Path, origin))
 }
 
 // DeparturesToDestination returns all of the departures from one station to another
@@ -139,7 +140,7 @@ func getDeparturesDestination(endpoint *url.URL, origin, destination string) (*u
 	// append path data to endpoint
 	paths := []string{origin, "to", destination}
 	ext := strings.Join(paths, "/")
-	return endpoint.Parse(ext)
+	return endpoint.Parse(path.Join(endpoint.Path, ext))
 }
 
 // ServicesForDate returns all of the services on a given day
@@ -175,7 +176,7 @@ func getServicesDate(endpoint *url.URL, origin string, date time.Time) (*url.URL
 		fmt.Sprintf("%02d", date.Day()),
 	}
 	ext := strings.Join(paths, "/")
-	return endpoint.Parse(ext)
+	return endpoint.Parse(path.Join(endpoint.Path, ext))
 }
 
 // ServicesForTime returns all the services ot a given time
@@ -212,7 +213,7 @@ func getServicesTime(endpoint *url.URL, origin string, date time.Time) (*url.URL
 		fmt.Sprintf("%02d%02d", date.Hour(), date.Minute()),
 	}
 	ext := strings.Join(paths, "/")
-	return endpoint.Parse(ext)
+	return endpoint.Parse(path.Join(endpoint.Path, ext))
 }
 
 // ServiceInfo returns information about a specific service id
@@ -248,5 +249,5 @@ func getServiceInfo(endpoint *url.URL, service string, date time.Time) (*url.URL
 		fmt.Sprintf("%02d%02d", date.Hour(), date.Minute()),
 	}
 	ext := strings.Join(paths, "/")
-	return endpoint.Parse(ext)
+	return endpoint.Parse(path.Join(endpoint.Path, ext))
 }

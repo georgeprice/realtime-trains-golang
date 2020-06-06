@@ -129,6 +129,34 @@ func mockServer() http.HandlerFunc {
 	}
 }
 
+func TestUserBuilder(t *testing.T) {
+
+	var (
+		baseURLString           = "http://www.iamtheapi.com/json/v1"
+		expectedSearchEndpoint  = baseURLString + "/search"
+		expectedServiceEndpoint = baseURLString + "/service"
+	)
+
+	// creating the base URL to pass onto the builder
+	baseURL, err := url.Parse(baseURLString)
+	if err != nil {
+		t.Fatalf("Got error when parsing base url string %s, got error %+v", baseURLString, err)
+	}
+
+	// creating a User object w/ the builder func
+	user, err := New(username, password, baseURL, &http.Client{})
+	if err != nil {
+		t.Fatalf("Got error when creating user object, got error %+v", err)
+	}
+
+	switch {
+	case user.SearchEndpoint.String() != expectedSearchEndpoint:
+		t.Fatalf("Got wrong search endpoint, got %+v, expected %+v", user.SearchEndpoint, expectedSearchEndpoint)
+	case user.ServiceEndpoint.String() != expectedServiceEndpoint:
+		t.Fatalf("Got wrong service endpoint, got %+v, expected %+v", user.ServiceEndpoint, expectedServiceEndpoint)
+	}
+}
+
 func TestAPI(t *testing.T) {
 	var (
 		client User
@@ -162,6 +190,8 @@ func TestAPI(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+
+		t.Logf("Using client %+v", client)
 
 	})
 
@@ -216,27 +246,6 @@ func TestAPI(t *testing.T) {
 	})
 
 	t.Run("Errors", func(t *testing.T) {
-
-		t.Run("Bad Base", func(t *testing.T) {
-
-			// create base URL for requests
-			badBase := &url.URL{
-				Scheme: "fakeScheme!!!",
-				Host:   "fakeHost!!!",
-			}
-
-			// create client for interacting with mock API
-			badClient, err := New(username, password, badBase, &http.Client{})
-			if err != nil {
-				t.Fatal(err)
-			}
-
-			_, err = badClient.get(badBase)
-			if err == nil {
-				t.Fatal(err)
-			}
-
-		})
 
 		t.Run("Cannot Connect", func(t *testing.T) {
 
